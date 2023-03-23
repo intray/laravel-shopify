@@ -111,39 +111,7 @@ class VerifyShopify
 
         $tokenSource = $this->getAccessTokenFromRequest($request);
 
-        if ($tokenSource === null) {
-            //Check if there is a store record in the database
-            return $this->checkPreviousInstallation($request)
-                // Shop exists, token not available, we need to get one
-                ? $this->handleMissingToken($request)
-                // Shop does not exist
-                : $this->handleInvalidShop($request);
-        }
-
-        try {
-            // Try and process the token
-            $token = SessionToken::fromNative($tokenSource);
-        } catch (AssertionFailedException $e) {
-            // Invalid or expired token, we need a new one
-            return $this->handleInvalidToken($request, $e);
-        }
-
-        // Set the previous shop (if available)
-        if ($request->user()) {
-            $this->previousShop = $request->user();
-        }
-
-        // Login the shop
-        $loginResult = $this->loginShopFromToken(
-            $token,
-            NullableSessionId::fromNative($request->query('session'))
-        );
-        if (! $loginResult) {
-            // Shop is not installed or something is missing from it's data
-            return $this->handleInvalidShop($request);
-        }
-
-        return $next($request);
+        return $this->handleInvalidShop($request);
     }
 
     /**
