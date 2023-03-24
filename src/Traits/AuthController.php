@@ -74,7 +74,7 @@ trait AuthController
                 // Go to laravel home route
                 $query = Util::parseQueryString($request->server->get('QUERY_STRING'));
 
-                $response = redirect()->action('AuthenticatedController@index', ['shopParam' => http_build_query($query)]);
+                $response = redirect('/authenticated/' . http_build_query($query));
                 $response = $this->setCookie($response, $query);
 
                 return $response;
